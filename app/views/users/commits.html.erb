@@ -20,5 +20,35 @@
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
 <script>
-  var commits = <%= raw @commits.to_json %>;
+$(document).ready(function() {
+
+  $('input[class="daterange"]').daterangepicker(
+    {
+      locale: {
+        format: 'YYYY-MM-DD'
+      },
+      startDate: dateDomain(commits)[0],
+      endDate: dateDomain(commits)[1]
+    },
+    function(start, end, label) {
+        // alert("A new date range was chosen: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        $.ajax({
+          type: "GET",
+          contentType: "application/json",
+          url: "commits",
+          data: { since: String(start), until: String(end), repo: {name: String(repoName)} },
+          dataType: "script",
+          beforeSend: function() {
+            $(".commits-graph").addClass('loadingDiv');
+          },
+          success: function (result) {
+              $(".commits-graph").removeClass('loadingDiv');
+           },
+           error: function (){
+              window.alert("something wrong!");
+           }
+        });
+    });
+
+});
 </script>
