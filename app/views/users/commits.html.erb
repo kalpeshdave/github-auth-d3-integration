@@ -1,28 +1,34 @@
-<div class="row" style="text-align: center;">
-  <h3>Repo : <%= params[:repo][:name] %></h3>
-  <p><%= params[:repo][:description] %></p>
-  <a href="<%= params[:repo][:html_url] %>" target="_new">view on github</a>
 
-  <p>Created: <%= Date.parse(params[:repo][:created_at]).strftime("%b %d, %Y") %> </p>
-  <p>Size: <%= params[:repo][:size] %> bytes</p>
-  <p>Main Language: <%= params[:repo][:language] %></p>
+<div class="row">
+  <div class="col-lg-12 mx-auto">
+    <h2 class="text-secondary text-uppercase mb-0"><%= params[:repo][:name] %></h2>
+    <hr class="star-dark mb-5">
+    <img class="img-fluid mb-5" src="/assets/github-icon.png" alt="" style="width: 15%; float: left;">
+    <p class="mb-5 clearfix">
+      <%= params[:repo][:description] %><br>
+      Created: <%= Date.parse(params[:repo][:created_at]).strftime("%b %d, %Y") %><br>
+      Size: <%= params[:repo][:size] %> bytes <br>
+      Main Language: <%= params[:repo][:language] %>
+    </p>
 
+    <div id='header-wrapper mb-5'>
+      <h2 class="text-secondary text-center" id="title"> Commits on <span>Github</span> Repository </h1>
+        <div class="md-form">
+          <input placeholder="Selected date" type="text" class="daterange form-control">
+      </div>
+    </div>
 
-  <div id='header-wrapper'>
-    <h1 id='title'> Commits on <span>Github</span> Repository </h1>
-    <span style=""><input type="text" class="daterange"/></span>
+    <div class="commits-graph" id="<%= params[:repo][:name] %>"><%= render 'commits_graph' %></div>
+
+    <h2 id='bar-info' class="text-center"></h2>
   </div>
-
-  <div class="commits-graph" id="<%= params[:repo][:name] %>"><%= render 'commits_graph' %></div>
-
-  <h2 id='bar-info'></h2>
 </div>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.0.1/d3.v3.min.js"></script>
-<script>
+<script type="text/javascript">
 $(document).ready(function() {
-
-  $('input[class="daterange"]').daterangepicker(
+  var commits = <%= raw @commits.to_json %>,
+  repoName = $('.commits-graph').attr('id');
+  $('.daterange').daterangepicker(
     {
       locale: {
         format: 'YYYY-MM-DD'
@@ -31,6 +37,7 @@ $(document).ready(function() {
       endDate: dateDomain(commits)[1]
     },
     function(start, end, label) {
+
         // alert("A new date range was chosen: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         $.ajax({
           type: "GET",

@@ -1,0 +1,12 @@
+<%=
+  case @status_code
+  when 503
+    "503 - Service Unavailable"
+  when 404
+    "404 - Not Found"
+  when 500
+    "500 - Internal Server Error"
+  else
+    "#{@status_code} - Error"
+  end
+%>

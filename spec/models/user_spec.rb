@@ -9,7 +9,11 @@ RSpec.describe User, type: :model do
   it { should respond_to(:email) }
 
   it "#email returns a string" do
-    expect(@user.email).to match 'example_user@domain.com'
+    expect(@user.email).to match 'sample.user@domain.com'
+  end
+
+  it "#username returns a string" do
+    expect(@user.username).to match 'sampleuser'
   end
 
 end

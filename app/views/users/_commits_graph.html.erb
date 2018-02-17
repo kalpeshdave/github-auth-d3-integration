@@ -1,52 +1,99 @@
 <div id='graph-wrapper'></div>
 
-<script>
-  var commits = <%= raw @commits.to_json %>;
-  var h = 600, w = 1000,
-  repoName = $('.commits-graph').attr('id'),
-  inputDateDomain = dateDomain(commits),
-  commitsByFrequency = commitFrequencies(commits),
-  outputCommitDomain = [0, maxCommitsInDay(commitsByFrequency)],
-  barWidth = w/daysBetween(inputDateDomain);
+<script type="text/javascript">
+  $(document).ready(function(){
+    var commits = <%= raw @commits.to_json %>,
+    margin = {top: 20, right: 20, bottom: 70, left: 40},
+    w = $(document).width() - 165 - margin.left - margin.right,
+    h = 600 - margin.top - margin.bottom,
+    repoName = $('.commits-graph').attr('id'),
+    inputDateDomain = dateDomain(commits),
+    commitsByFrequency = commitFrequencies(commits),
+    outputCommitDomain = [0, maxCommitsInDay(commitsByFrequency)],
+    barWidth = w/daysBetween(inputDateDomain);
 
-  renderGraphCanvas(h, w);
+    var x = d3.scale.ordinal().rangeRoundBands([0, w], .05);
+    var y = d3.scale.linear().range([h, 0]);
 
-  var barHeight = d3.scale.linear()
-      .domain(outputCommitDomain)
-      .range([0, h]);
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
+        .tickFormat(d3.time.format("%Y-%m-%d"));
 
-  // this gives us an output from 0 to one less than the number
-  // of days from first to last commit, this ensures scale
-  // starting at zero, but with correct number of indecies
-  var barIndex = d3.time.scale()
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(10);
+
+    var svg = d3.select("#graph-wrapper")
+              .append("svg")
+              .attr('id', 'graph-canvas')
+              .attr("width", w + margin.left + margin.right)
+              .attr("height", h + margin.top + margin.bottom)
+              .append("g")
+                .attr("transform",
+                      "translate(" + margin.left + "," + margin.top + ")");
+
+    var barHeight = d3.scale.linear()
+    .domain(outputCommitDomain)
+    .range([0, h]);
+
+    // this gives us an output from 0 to one less than the number
+    // of days from first to last commit, this ensures scale
+    // starting at zero, but with correct number of indecies
+    var barIndex = d3.time.scale()
     .domain(inputDateDomain)
     .range([0, daysBetween(inputDateDomain) - 1]);
 
-  // map bar indecies to x positions
-  var barPosition = d3.scale.linear()
+    // map bar indecies to x positions
+    var barPosition = d3.scale.linear()
     .domain([0, daysBetween(inputDateDomain)])
     .range([0, w]);
 
-  var canvas = d3.select('#graph-canvas');
+    x.domain(inputDateDomain);
+    y.domain([0, d3.max(outputCommitDomain)]);
 
-  canvas.selectAll('rect')
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + h + ")")
+      .call(xAxis)
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-90)" );
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Commits");
+
+    svg.selectAll('rect')
     .data(commitsByFrequency)
-    .enter()
-    .append('rect')
-    .attr('width',barWidth)
-    .attr('height', function(data, index){
+      .enter()
+      .append('rect')
+      .style("fill", "steelblue")
+      .attr('width',barWidth)
+      .attr('height', function(data, index){
       return barHeight(data.length);
-    })
-    .attr('x', function(data, index){
+      })
+      .attr('x', function(data, index){
       var date = commitDate(data[0]),
           index = barIndex(date),
           pos = barPosition(index);
       return pos;
-    })
-    .attr('y', function(data, index){
+      })
+      .attr('y', function(data, index){
       return h - barHeight(data.length);
-    })
-    .on('mouseenter', function(data){
+      })
+      .on('mouseenter', function(data){
       $("#bar-info").html(data.length + " Commits on " + commitDate(data[0]));
-    });
+      });
+
+  });
 </script>

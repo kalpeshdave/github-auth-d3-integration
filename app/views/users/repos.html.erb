@@ -1,22 +1,13 @@
 <div class="row">
-  <h1>Repo List</h1>
+  <h2 class="text-center text-uppercase text-secondary mb-0">My Repositories (<%= @repos.size %>)</h2>
+  <hr class="star-dark mb-5">
 
-  <table class="table">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @repos.each_with_index do |repo, index| %>
-        <tr>
-          <th scope="row"><%= index+1 %></th>
-          <td><%= link_to repo['name'], commits_user_url(repo: repo.slice('name', 'description', 'html_url', 'size', 'created_at', 'language')) %></td>
-          <td><%= repo['description'] %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <% @repos.each_with_index do |repo, index| %>
+    <div class="col-md-6 col-lg-3 text-center text-uppercase" id="d1">
+      <a class="portfolio-item d-block mx-auto" href="<%= commits_user_url(repo: repo.slice('name', 'description', 'html_url', 'size', 'created_at', 'language')) %>">
+        <%= image_tag("/assets/github-icon.png", class: "img-fluid", style: "width: 50%;") %>
+        <h3 style="margin-top: 0;"><%= repo['name'].truncate(20) %></h3>
+      </a>
+    </div>
+  <% end %>
 </div>

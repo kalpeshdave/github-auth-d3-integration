@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Error!</title>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+  </head>
+  <body>
+    <main role="main">
+      <div id="wrap row" style="text-align: center; margin: 0 10px;">
+        <h1>Error!</h1>
+
+        <div class="content">
+          <hr>
+          <h2><%= yield %></h2>
+          <hr>
+        </div>
+
+        <pre>
+          <code><%= @exception.inspect %></code>
+        </pre>
+      </div>
+    </main>
+
+  </body>
+</html>

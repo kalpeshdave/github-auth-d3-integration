@@ -4,7 +4,7 @@ class User < ApplicationRecord
       user.provider = auth['provider']
       user.uid = auth['uid']
       if auth['info']
-        user.username = auth['info']['nickname']
+         user.username = auth['info']['nickname']
          user.email = auth['info']['email']
          user.avatar_url = auth['info']['image'] || ""
          user.oauth_token = auth['credentials']['token']

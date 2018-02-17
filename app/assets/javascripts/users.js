@@ -32,6 +32,7 @@ function commitFrequencies(commits) {
   for(var key in byDateObj) {
     byDateArray.push( byDateObj[key] );
   }
+
   return byDateArray;
 }
 
@@ -59,14 +60,4 @@ function commitDate(commit) {
 function daysBetween(minMaxArray) {
   var milliseconds = minMaxArray[1] - minMaxArray[0];
   return parseInt(milliseconds* 1.15741E-8, 10) + 1;
-}
-
-// create a canvas for our graph
-function renderGraphCanvas(h, w) {
-  var svg = d3.select('#graph-wrapper')
-    .append('svg')
-    .attr('id', 'graph-canvas')
-    .attr('height', h)
-    .attr('width', w)
-    .style('border', '2px solid black');
 }
